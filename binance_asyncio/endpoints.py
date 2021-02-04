@@ -32,9 +32,7 @@ class BaseClient:
 
             query_string = urlencode(parameters)
             location = '{}/{}'.format(BaseClient.uri, endpoint)
-            print(location, str.encode(query_string))
             async with session.post(location, headers=self.headers, data=str.encode(query_string)) as response:
-                print(response.status)
                 return await response.json()
 
     def get_signature(self, parameters):
