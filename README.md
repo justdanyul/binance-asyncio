@@ -1,10 +1,10 @@
-# Welcome to binance asyncio v0.1.2
+# Welcome to binance-asyncio
 
 This is an unofficial wrapper for the Binance API, as per the license, its provided with no guarantee, so use it at your own risk.
 
 ## Current status
 
-Currently, in short, this library offer good coverage of the web-sockets, and terrible coverage for everything else.
+This is very much work-in-process, currently, this library offer fairly good coverage of the web-sockets, and terrible coverage for everything else.
 
 ## Quick start
 

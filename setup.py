@@ -3,9 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open("VERSION", "r") as fh:
+    version = fh.read()
+
 setuptools.setup(
     name="binance-asyncio", 
-    version="0.0.1",
+    version=version,
     author="Daniel Kirkegaard Mouritsen",
     author_email="daniel.mouritsen@gmail.com",
     description="Library for interacting with the Binance API",
@@ -22,5 +25,5 @@ setuptools.setup(
         'websockets',
         'aiohttp',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.9',
 )
