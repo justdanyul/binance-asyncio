@@ -33,7 +33,7 @@ class BaseClient:
             query_string = urlencode(parameters)
             location = '{}/{}'.format(BaseClient.uri, endpoint)
             async with session.post(location, headers=self.headers, data=str.encode(query_string)) as response:
-                return await response.json()
+                return response.status, await response.json()
 
     def get_signature(self, parameters):
         request = str.encode(urlencode(parameters))
@@ -170,8 +170,8 @@ class AccountEndpoints(BaseClient):
                 .build()
                 .get_params(),
             True)
-    
-    async def test_order(self, symbol: str, side:str, order_type:str, **parameters):
+
+    async def _create_order(self, symbol: str, side:str, order_type:str, **parameters):
         timestamp = int(round(time.time() * 1000))
         request = Request()
         request.add_param('symbol', symbol)
@@ -179,6 +179,13 @@ class AccountEndpoints(BaseClient):
         request.add_param('type', order_type)
         request.add_param('timestamp', timestamp)
         request.add_parameters(parameters)
+        return request
 
+    async def test_order(self, symbol: str, side:str, order_type:str, **parameters):
+        request = await self._create_order(symbol, side, order_type, **parameters)
         return await self._post('order/test', request.get_params(), True)
+
+    async def order(self, symbol: str, side:str, order_type:str, **parameters):
+        request = await self._create_order(symbol, side, order_type, **parameters)
+        return await self._post('order', request.get_params(), True)
 
