@@ -44,20 +44,7 @@ class BaseClient:
 
 
 
-class MarketDataEndpoints(BaseClient):
-    """
-    Class wrapping the Market data endpoints of the BINANCE RESTfull API
-
-    This is a slightly longer description of the class, if you are such inclined 
-
-    :param arg1: description
-    :param arg2: description
-    :type arg1: type description
-    :type arg1: type description
-    :return: return description
-    :rtype: the return type description
-
-    """
+class GeneralEndpoints(BaseClient):
     def __init__(self, api_key=None) -> None:
         super().__init__(api_key)
 
@@ -75,6 +62,23 @@ class MarketDataEndpoints(BaseClient):
         :rtype: dict
         """          
         return await self._get('ping')
+
+class MarketDataEndpoints(BaseClient):
+    """
+    Class wrapping the Market data endpoints of the BINANCE RESTfull API
+
+    This is a slightly longer description of the class, if you are such inclined 
+
+    :param arg1: description
+    :param arg2: description
+    :type arg1: type description
+    :type arg1: type description
+    :return: return description
+    :rtype: the return type description
+
+    """
+    def __init__(self, api_key=None) -> None:
+        super().__init__(api_key)
 
     async def get_orderbook(self, symbol: str, limit=100):
         """

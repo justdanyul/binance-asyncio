@@ -31,7 +31,7 @@ class BaseStream(ABC):
     async def get_stream_identifier(self) -> str:
         pass
 
-    async def subscribe(self, *args:Tuple):
+    async def subscribe(self, *args:str):
         await self._add_parameter(args)
         if self.socket_reference is not None:
             await self.socket_reference.send(await self._get_request('SUBSCRIBE'))
@@ -60,6 +60,10 @@ class TradeStream(BaseStream):
 class TickerStream(BaseStream):
     async def get_stream_identifier(self) -> str:
         return "{}@ticker"
+
+class AllMarketTickerStream(BaseStream):
+    async def get_stream_identifier(self) -> str:
+        return "!ticker@arr"
 
 class MiniTickerStream(BaseStream):
     async def get_stream_identifier(self) -> str:
