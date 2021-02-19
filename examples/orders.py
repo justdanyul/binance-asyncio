@@ -1,5 +1,5 @@
 import asyncio
-from binance_asyncio.endpoints import AccountEndpoints, MarketDataEndpoints
+from binance_asyncio.endpoints import AccountEndpoints
 
 async def main():
     api_key = '<insert your api key here>'
