@@ -170,7 +170,7 @@ class MarketDataEndpoints(BaseClient):
 
         :param symbol: The symbol of the pair
         :param limit: The maximum number results wanted. It default to 500 , the maximum is 1000.
-        :param from_id This is the tradeid to fetch from, if none is provided, it just gets most recent trades
+        :param from_id: This is the tradeid to fetch from, if none is provided, it just gets most recent trades
         :type symbol: string
         :type limit: int
         :rtype: (int, list) 

@@ -12,14 +12,3 @@ use it at your own risk.
    
    /getting-started
    /api-documentation
-
-
-Response:
-
-
-
-Indices and tables
-==================
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
