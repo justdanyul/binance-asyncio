@@ -20,7 +20,8 @@ This is very much work-in-process, I made it for some personal projects, where I
 context. And its been working well for me, so I thought I'd share it. 
 
 ### Status of documentation
-I got a very early version of the documentation ready here at: binance-asyncio.readthedocs.io
+I got a very early version of the documentation ready here at: [binance-asyncio.readthedocs.io](https://binance-asyncio.readthedocs.io)
+
 
 Its still a WIP, but should prove helpful regardless. Also, as mentioned, you can also look in the `examples` directory to get started.
 
