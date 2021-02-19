@@ -45,51 +45,91 @@ class BaseClient:
 
 
 class GeneralEndpoints(BaseClient):
+    """
+    Class wrapping the general endpoints of the BINANCE RESTfull API
+
+    :param api_key: your Binance provided API key
+    :type api_key: string
+    """
     def __init__(self, api_key=None) -> None:
         super().__init__(api_key)
 
     async def get_exchange_info(self):
+        """
+        Get the current exchange trading rules and symbol information
+
+        :rtype: (int, dict)  
+        :return: returns a tuple, where the first element is the HTTP 
+            response status code and the second element is a dict representing 
+            the JSON response from the server
+        """
         return await self._get('exchangeInfo')
 
     async def get_server_time(self):
+        """
+        This checks the connectivity to the binance REST APIs, and returns the current server time.
+        
+        :rtype: (int, dict)   
+        :return: returns a tuple, where the first element is the HTTP 
+            response status code and the second element is a dict representing 
+            the JSON response from the server of the form
+
+            .. code-block::
+            
+                {
+                    "serverTime": 1499828319859
+                }
+        """      
         return await self._get('time')
 
     async def ping(self):
         """
-        Ping the exchange to test connectivity
-        
-        :return: The order book for the requested symbol
-        :rtype: dict
+        Ping the exchange to test the connectivity to the binance REST APIs
         """          
         return await self._get('ping')
+
 
 class MarketDataEndpoints(BaseClient):
     """
     Class wrapping the Market data endpoints of the BINANCE RESTfull API
 
-    This is a slightly longer description of the class, if you are such inclined 
-
-    :param arg1: description
-    :param arg2: description
-    :type arg1: type description
-    :type arg1: type description
-    :return: return description
-    :rtype: the return type description
-
+    :param api_key: your Binance provided API key
+    :type api_key: string
     """
     def __init__(self, api_key=None) -> None:
         super().__init__(api_key)
 
     async def get_orderbook(self, symbol: str, limit=100):
         """
-        Get the order book.
+        Gets the order book.
 
         :param symbol: The symbol of the pair
-        :param limit: The maximum number results wanted
+        :param limit: The maximum number results wanted. It default to 100 , the  
+            maximum is 5000. And valid limits are 5, 10, 20, 50, 100, 500, 1000, 5000
         :type symbol: string
-        :type limit: integer
-        :return: The order book for the requested symbol
-        :rtype: dict
+        :type limit: int
+        :rtype: (int, dict)   
+        :return: returns a tuple, where the first element is the HTTP 
+            response status code and the second element is a dict representing 
+            the JSON response from the server
+
+            .. code-block::
+            
+                {
+                    "lastUpdateId": 23321024,
+                    "bids": [
+                        [
+                        "1.00000000",    // the price
+                        "42.00000000"    // the quantity
+                        ]
+                    ],
+                    "asks": [
+                        [
+                        "4.00001300",
+                        "14.00000000"
+                        ]
+                    ]
+                }
         """  
         return await self._get('depth', \
             RequestBuilder().with_symbol(symbol).with_limit(limit).build().get_params())
@@ -99,25 +139,58 @@ class MarketDataEndpoints(BaseClient):
         Get the most recent trades for a symbol.
 
         :param symbol: The symbol of the pair
-        :param limit: The maximum number results wanted
+        :param limit: The maximum number results wanted. It default to 500 , the maximum is 1000.
         :type symbol: string
-        :type limit: integer
-        :return: The most recent trades of the requested symbol
-        :rtype: dict
+        :type limit: int
+        :rtype: (int, list) 
+        :return: returns a tuple, where the first element is the HTTP 
+            response status code and the second element is a list 
+            containing all recent trades 
+
+            .. code-block::
+            
+                [
+                    {
+                        "id": 82457,
+                        "price": "23.00000",
+                        "qty": "12.00000000",
+                        "quoteQty": "48.000012",
+                        "time": 1499865542190,
+                        "isBuyerMaker": true,
+                        "isBestMatch": true
+                    }
+                ]
         """
         return await self._get('trades', \
             RequestBuilder().with_symbol(symbol).with_limit(limit).build().get_params())
     
     async def get_historical_trades(self, symbol: str, limit=500, from_id=None):
         """
-        Get historical trades.
+        Get historical trades for a symbol.
 
         :param symbol: The symbol of the pair
-        :param limit: The maximum number results wanted
+        :param limit: The maximum number results wanted. It default to 500 , the maximum is 1000.
+        :param from_id This is the tradeid to fetch from, if none is provided, it just gets most recent trades
         :type symbol: string
-        :type limit: integer
-        :return: The most recent trades of the requested symbol
-        :rtype: dict
+        :type limit: int
+        :rtype: (int, list) 
+        :return: returns a tuple, where the first element is the HTTP 
+            response status code and the second element is a list 
+            containing all recent trades 
+
+            .. code-block::
+            
+                [
+                    {
+                        "id": 82457,
+                        "price": "23.00000",
+                        "qty": "12.00000000",
+                        "quoteQty": "48.000012",
+                        "time": 1499865542190,
+                        "isBuyerMaker": true,
+                        "isBestMatch": true
+                    }
+                ]
         """
         return await self._get('historicalTrades', 
             RequestBuilder()
@@ -165,7 +238,7 @@ class MarketDataEndpoints(BaseClient):
         return await self._get('ticker/bookTicker', 
             RequestBuilder().with_symbol(symbol).build().get_params())
 
- 
+
 class AccountEndpoints(BaseClient):
     async def get_account_information(self):
         return await self._get('account', 

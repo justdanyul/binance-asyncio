@@ -9,32 +9,25 @@ Firstly, install the package with
 
 Making your first request
 -------------------------
-Lets say you want to retrieve all klines, with interval length of 1 minute,from the last 10 minutes. You then simply
+Lets say you want to retrieve all klines, with interval length of 5 minutes, from the last 2 hours. You then simply
 
 .. code-block::
 
     import asyncio
-    from binance_asyncio.endpoints.market_data import MarketDataEndpoints
+    from binance_asyncio.endpoints import MarketDataEndpoints
 
     async def main():
-        secret_key = 'insert key here'
-        my_api_key = 'insert key here'
-        market_data = MarketDataEndpoints(api_key=my_api_key)
-        general_endpoints = get_general_endpoint()
-        result = await market_data.get_klines('btcusdt', interval="1m", start_time="10 minutes ago")
-        print(result)
-
+        api_key = '<insert your api key here>'
+        market_data = MarketDataEndpoints(api_key=api_key)
+        code, result = await market_data.get_klines('btcusdt', interval="5m", start_time="2 hours ago", end_time="now")
+        print(code, result)
+        
     asyncio.run(main())
 
 The two main learnings of this short example are
 
-- You must provide your api key and secret
-- We use the BinanceClient to get an configured instance of the class ``MarketDataEndpoints``, which encapsulate all interaction with BINANCE's RESTfull market data endpoints
+- You must always provide your api key (and secret if required) when creating a new instance of an endpoint
+- When providing time parameters, such as ``start_time``, you use natural language. For example, `6 seconds ago`, `1 month ago` etc.  
+- All method calls, wrapping binance endpoints, will return a tuple with the response code as the first element, and the body of the response as the second
+- All enums, such as the input for the interval parameter, follows `the binance documentation <https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md#enum-definitions>`_
 
-You can use BinanceClient to get instances of
-
-- :class:`binance_asyncio.endpoints.market_data.MarketDataEndpoints`
-- :class:`binance_asyncio.endpoints.market_data.MarketDataEndpoints`
-
-To learn more about information about the individual classes visit  
-and the binance api documentation.
