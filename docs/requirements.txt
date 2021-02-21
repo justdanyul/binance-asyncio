@@ -1,2 +1,5 @@
 sphinx
 sphinx-material
+websockets
+aiohttp
+dateparser
