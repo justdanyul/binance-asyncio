@@ -13,19 +13,25 @@ class BaseStream(ABC):
         self.active_id = None
         self.socket_reference = None
 
-    async def start(self,  handler: Callable):
+    async def start(self,  handler: Callable, keep_alive=False):
         self.active_id = BaseStream.last_id = BaseStream.last_id + 1
-        while self.active:
-            try:
-                async with websockets.connect(BaseStream.uri) as websocket:
-                    self.socket_reference = websocket
-                    request = await self._get_request('SUBSCRIBE')
-                    await websocket.send(request)
-                    await websocket.recv()
-                    async for message in websocket:
-                        await handler(message)
-            except:
-                continue
+        if not keep_alive:
+            await self._start(handler)
+        else:
+            while self.active:
+                try:
+                    await self._start(handler)
+                except:
+                    continue
+
+    async def _start(self,  handler: Callable):
+        async with websockets.connect(BaseStream.uri) as websocket:
+            self.socket_reference = websocket
+            request = await self._get_request('SUBSCRIBE')
+            await websocket.send(request)
+            await websocket.recv()
+            async for message in websocket:
+                await handler(message)
 
     @abstractmethod
     async def get_stream_identifier(self) -> str:
