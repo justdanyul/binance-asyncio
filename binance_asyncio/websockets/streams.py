@@ -37,7 +37,10 @@ class BaseStream(ABC):
     async def get_stream_identifier(self) -> str:
         pass
 
-    async def subscribe(self, *args:str):
+    async def subscribe(self, symbol:str) -> None:
+        await self._subscribe(symbol)
+
+    async def _subscribe(self, *args:str):
         await self._add_parameter(args)
         if self.socket_reference is not None:
             await self.socket_reference.send(await self._get_request('SUBSCRIBE'))
@@ -53,14 +56,13 @@ class BaseStream(ABC):
 
     async def _add_parameter(self, args):
         parameter = (await self.get_stream_identifier()).format(*args)
-        print(parameter)
         self.parameters[parameter] = None
 
 class AggregateTradeStream(BaseStream):
     async def get_stream_identifier(self) -> str:
         return "{}@aggTrade"
 
-class TradeStream(BaseStream):
+class TradeStream(BaseStream): 
     async def get_stream_identifier(self) -> str:
         return "{}@trade"
 
@@ -72,7 +74,7 @@ class AllMarketTickerStream(BaseStream):
     async def get_stream_identifier(self) -> str:
         return "!ticker@arr"
 
-class MiniTickerStream(BaseStream):
+class MiniTickerStream(BaseStream):    
     async def get_stream_identifier(self) -> str:
         return "{}@miniTicker"
 
@@ -81,6 +83,10 @@ class AllMarketsMiniTickerStream(BaseStream):
         return "!miniTicker@arr"
 
 class KlineStream(BaseStream):
+    async def subscribe(self, symbol:str, interval:str) -> None:
+        arguments = [symbol, interval]
+        await super()._subscribe(*arguments)
+
     async def get_stream_identifier(self) -> str:
         return "{}@kline_{}"
 
@@ -93,16 +99,16 @@ class AllBookTickerStream(BaseStream):
         return "!bookTicker"
 
 class PartialBookDepthStream(BaseStream):
-    async def subscribe(self, symbol, levels, more_updates=False) -> None:
+    async def subscribe(self, symbol:str, levels:str, more_updates:bool=False) -> None:
         arguments = [symbol, levels, "" if not more_updates else "@100ms"]
-        await super().subscribe(*arguments)
+        await super()._subscribe(*arguments)
 
     async def get_stream_identifier(self) -> str:
         return "{}@depth{}{}"
 
 class DiffDepthStream(BaseStream):
-    async def subscribe(self, symbol, more_updates=False) -> None:
+    async def subscribe(self, symbol:str, more_updates:bool=False) -> None:
         arguments = [symbol, "" if not more_updates else "@100ms"]
-        await super().subscribe(*arguments)
+        await super()._subscribe(*arguments)
     async def get_stream_identifier(self) -> str:
         return "{}@depth{}"
