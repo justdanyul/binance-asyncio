@@ -82,3 +82,11 @@ class AllMarketsMiniTickerStream(BaseStream):
 class KlineStream(BaseStream):
     async def get_stream_identifier(self) -> str:
         return "{}@kline_{}"
+
+class SymbolBookTickerStream(BaseStream):
+    async def get_stream_identifier(self) -> str:
+        return "{}@bookTicker"
+
+class AllBookTickerStream(BaseStream):
+    async def get_stream_identifier(self) -> str:
+        return "!bookTicker"
