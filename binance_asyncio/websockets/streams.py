@@ -53,6 +53,7 @@ class BaseStream(ABC):
 
     async def _add_parameter(self, args):
         parameter = (await self.get_stream_identifier()).format(*args)
+        print(parameter)
         self.parameters[parameter] = None
 
 class AggregateTradeStream(BaseStream):
@@ -90,3 +91,18 @@ class SymbolBookTickerStream(BaseStream):
 class AllBookTickerStream(BaseStream):
     async def get_stream_identifier(self) -> str:
         return "!bookTicker"
+
+class PartialBookDepthStream(BaseStream):
+    async def subscribe(self, symbol, levels, more_updates=False) -> None:
+        arguments = [symbol, levels, "" if not more_updates else "@100ms"]
+        await super().subscribe(*arguments)
+
+    async def get_stream_identifier(self) -> str:
+        return "{}@depth{}{}"
+
+class DiffDepthStream(BaseStream):
+    async def subscribe(self, symbol, more_updates=False) -> None:
+        arguments = [symbol, "" if not more_updates else "@100ms"]
+        await super().subscribe(*arguments)
+    async def get_stream_identifier(self) -> str:
+        return "{}@depth{}"
