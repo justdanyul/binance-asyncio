@@ -39,7 +39,7 @@ Its still a WIP, but should prove helpful regardless. Also, as mentioned, you ca
 - [x] All Market Mini Tickers Stream
 - [x] Individual Symbol Ticker Streams
 - [x] All Market Tickers Stream
-- [ ] Individual Symbol Book Ticker Streams
-- [ ] All Book Tickers Stream
-- [ ] Partial Book Depth Streams
-- [ ] Diff. Depth Stream
+- [x] Individual Symbol Book Ticker Streams
+- [x] All Book Tickers Stream
+- [x] Partial Book Depth Streams
+- [x] Diff. Depth Stream
