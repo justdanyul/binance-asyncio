@@ -24,6 +24,7 @@ setuptools.setup(
     install_requires=[
         'websockets',
         'aiohttp',
+        'dateparser',
     ],
     python_requires='>=3.9',
 )
