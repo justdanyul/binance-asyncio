@@ -7,11 +7,13 @@ from urllib.parse import urlencode
 
 class BaseClient:
     uri: str = "https://api.binance.com/api/v3"
-    def __init__(self, api_key, secret_key = None) -> None:
+
+    def __init__(self, api_key, secret_key = None, uri=None) -> None:
         self.headers = {'content-type': 'application/x-www-form-urlencoded'}
-        if not api_key is None:
+        if api_key is not None:
             self.headers['X-MBX-APIKEY'] = api_key
-        
+        if uri is not None:
+            self.uri = uri
         self.secret_key = secret_key
 
     async def _get(self, endpoint: str, parameters: dict = dict(), signed=False):
@@ -20,8 +22,7 @@ class BaseClient:
                 parameters['signature'] = self.get_signature(parameters)
 
             query_string = urlencode(parameters)
-            location = '{}/{}?{}'.format(BaseClient.uri, endpoint, query_string)
-                
+            location = '{}/{}?{}'.format(self.uri, endpoint, query_string)
             async with session.get(location, headers=self.headers) as response:
                 return response.status, await response.json()
     
@@ -31,7 +32,7 @@ class BaseClient:
                 parameters['signature'] = self.get_signature(parameters)
 
             query_string = urlencode(parameters)
-            location = '{}/{}'.format(BaseClient.uri, endpoint)
+            location = '{}/{}'.format(self.uri, endpoint)
             async with session.post(location, headers=self.headers, data=str.encode(query_string)) as response:
                 return response.status, await response.json()
 
@@ -51,8 +52,8 @@ class GeneralEndpoints(BaseClient):
     :param api_key: your Binance provided API key
     :type api_key: string
     """
-    def __init__(self, api_key=None) -> None:
-        super().__init__(api_key)
+    def __init__(self, api_key=None, uri=None) -> None:
+        super().__init__(api_key, uri=uri)
 
     async def get_exchange_info(self):
         """
@@ -96,8 +97,8 @@ class MarketDataEndpoints(BaseClient):
     :param api_key: your Binance provided API key
     :type api_key: string
     """
-    def __init__(self, api_key=None) -> None:
-        super().__init__(api_key)
+    def __init__(self, api_key=None, uri=None) -> None:
+        super().__init__(api_key, uri=uri)
 
     async def get_orderbook(self, symbol: str, limit=100):
         """
