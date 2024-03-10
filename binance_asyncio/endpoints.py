@@ -433,3 +433,8 @@ class AccountEndpoints(BaseClient):
         request = await self._create_order(symbol, side, order_type, **parameters)
         return await self._post('order', request.get_params(), True)
 
+    async def query_order(self, symbol, **parameters):
+        request = RequestBuilder().with_symbol(symbol=symbol).with_timestamp().build()
+        request.add_parameters(parameters)
+        return await self._get('order',request.get_params(),True)
+
