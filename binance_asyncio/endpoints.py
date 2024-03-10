@@ -25,6 +25,16 @@ class BaseClient:
             location = '{}/{}?{}'.format(self.uri, endpoint, query_string)
             async with session.get(location, headers=self.headers) as response:
                 return response.status, await response.json()
+
+    async def _delete(self, endpoint: str, parameters: dict = dict(), signed=False):
+        async with aiohttp.ClientSession() as session:
+            if signed:
+                parameters['signature'] = self.get_signature(parameters)
+
+            query_string = urlencode(parameters)
+            location = '{}/{}?{}'.format(self.uri, endpoint, query_string)
+            async with session.delete(location, headers=self.headers) as response:
+                return response.status, await response.json()            
     
     async def _post(self, endpoint: str, parameters: dict = dict(), signed=False):
         async with aiohttp.ClientSession() as session:
@@ -432,4 +442,36 @@ class AccountEndpoints(BaseClient):
     async def order(self, symbol: str, side:str, order_type:str, **parameters):
         request = await self._create_order(symbol, side, order_type, **parameters)
         return await self._post('order', request.get_params(), True)
+
+    async def query_order(self, symbol, **parameters):
+        request = RequestBuilder().with_symbol(symbol=symbol).with_timestamp().build()
+        request.add_parameters(parameters)
+        return await self._get('order',request.get_params(),True)
+
+    async def open_orders(self, symbol, **parameters):
+        builder = RequestBuilder().with_symbol(symbol=symbol).with_timestamp()
+        request = builder.build()
+        request.add_parameters(parameters)
+        return await self._get('openOrders',request.get_params(),True)
+
+    async def all_orders(self, symbol, **parameters):
+        builder = RequestBuilder().with_symbol(symbol=symbol).with_timestamp()
+
+        if 'startTime' in parameters:
+            builder.with_start_time(parameters['startTime'])
+            del parameters['startTime']
+        
+        if 'endTime' in parameters:
+            builder.with_end_time(parameters['endTime'])
+            del parameters['endTime']
+
+        request = builder.build()
+        request.add_parameters(parameters)
+        return await self._get('allOrders',request.get_params(),True)
+    
+
+    async def cancel_order(self, symbol, **parameters):
+        request = RequestBuilder().with_symbol(symbol=symbol).with_timestamp().build()
+        request.add_parameters(parameters)
+        return await self._delete('order',request.get_params(),True)
 
