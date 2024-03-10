@@ -25,6 +25,16 @@ class BaseClient:
             location = '{}/{}?{}'.format(self.uri, endpoint, query_string)
             async with session.get(location, headers=self.headers) as response:
                 return response.status, await response.json()
+
+    async def _delete(self, endpoint: str, parameters: dict = dict(), signed=False):
+        async with aiohttp.ClientSession() as session:
+            if signed:
+                parameters['signature'] = self.get_signature(parameters)
+
+            query_string = urlencode(parameters)
+            location = '{}/{}?{}'.format(self.uri, endpoint, query_string)
+            async with session.delete(location, headers=self.headers) as response:
+                return response.status, await response.json()            
     
     async def _post(self, endpoint: str, parameters: dict = dict(), signed=False):
         async with aiohttp.ClientSession() as session:
@@ -437,4 +447,9 @@ class AccountEndpoints(BaseClient):
         request = RequestBuilder().with_symbol(symbol=symbol).with_timestamp().build()
         request.add_parameters(parameters)
         return await self._get('order',request.get_params(),True)
+    
+    async def delete_order(self, symbol, **parameters):
+        request = RequestBuilder().with_symbol(symbol=symbol).with_timestamp().build()
+        request.add_parameters(parameters)
+        return await self._delete('order',request.get_params(),True)
 
