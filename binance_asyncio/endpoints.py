@@ -447,7 +447,29 @@ class AccountEndpoints(BaseClient):
         request = RequestBuilder().with_symbol(symbol=symbol).with_timestamp().build()
         request.add_parameters(parameters)
         return await self._get('order',request.get_params(),True)
+
+    async def open_orders(self, symbol, **parameters):
+        builder = RequestBuilder().with_symbol(symbol=symbol).with_timestamp()
+        request = builder.build()
+        request.add_parameters(parameters)
+        return await self._get('openOrders',request.get_params(),True)
+
+    async def all_orders(self, symbol, **parameters):
+        builder = RequestBuilder().with_symbol(symbol=symbol).with_timestamp()
+
+        if 'startTime' in parameters:
+            builder.with_start_time(parameters['startTime'])
+            del parameters['startTime']
+        
+        if 'endTime' in parameters:
+            builder.with_end_time(parameters['endTime'])
+            del parameters['endTime']
+
+        request = builder.build()
+        request.add_parameters(parameters)
+        return await self._get('allOrders',request.get_params(),True)
     
+
     async def delete_order(self, symbol, **parameters):
         request = RequestBuilder().with_symbol(symbol=symbol).with_timestamp().build()
         request.add_parameters(parameters)
