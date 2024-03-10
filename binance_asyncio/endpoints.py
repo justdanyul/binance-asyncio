@@ -470,7 +470,7 @@ class AccountEndpoints(BaseClient):
         return await self._get('allOrders',request.get_params(),True)
     
 
-    async def delete_order(self, symbol, **parameters):
+    async def cancel_order(self, symbol, **parameters):
         request = RequestBuilder().with_symbol(symbol=symbol).with_timestamp().build()
         request.add_parameters(parameters)
         return await self._delete('order',request.get_params(),True)
