@@ -8,13 +8,16 @@ from urllib.parse import urlencode
 class BaseClient:
     uri: str = "https://api.binance.com/api/v3"
 
-    def __init__(self, api_key, secret_key = None, uri=None) -> None:
+    def __init__(self, api_key, *, secret_key = None, uri=None, time_unit = None) -> None:
         self.headers = {'content-type': 'application/x-www-form-urlencoded'}
         if api_key is not None:
             self.headers['X-MBX-APIKEY'] = api_key
         if uri is not None:
             self.uri = uri
+        if time_unit is not None:
+            self.headers['X-MBX-TIME-UNIT'] = time_unit
         self.secret_key = secret_key
+    
 
     async def _get(self, endpoint: str, parameters: dict = dict(), signed=False):
         async with aiohttp.ClientSession() as session:
